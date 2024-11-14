@@ -1,15 +1,31 @@
 /* eslint-disable prettier/prettier */
-import { StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  Pressable,
+} from "react-native";
 import React from "react";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { theme } from "../theme";
+import * as Haptics from "expo-haptics";
 type Props = {
   name: string;
   isCompleted?: boolean;
+  onDelete: () => void;
+  onToggleComplete: () => void;
 };
-export default function ShoppingListItem({ name, isCompleted }: Props) {
+export default function ShoppingListItem({
+  name,
+  isCompleted,
+  onDelete,
+  onToggleComplete,
+}: Props) {
   const handleOnPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
       `Are you sure to delete this ${name}`,
       "This item will disappear permanently",
@@ -17,7 +33,7 @@ export default function ShoppingListItem({ name, isCompleted }: Props) {
         {
           text: "Yes",
           style: "destructive",
-          onPress: () => console.log("Deleted"),
+          onPress: onDelete,
         },
         {
           text: "Cancel",
@@ -27,11 +43,12 @@ export default function ShoppingListItem({ name, isCompleted }: Props) {
     );
   };
   return (
-    <View
+    <Pressable
       style={[
         styles.itemContainer,
         isCompleted ? styles.completedItemContainer : undefined,
       ]}
+      onPress={onToggleComplete}
     >
       <View style={styles.row}>
         <Feather
@@ -61,7 +78,7 @@ export default function ShoppingListItem({ name, isCompleted }: Props) {
           color={isCompleted ? theme.colorGrey : theme.colorRed}
         />
       </TouchableOpacity>
-    </View>
+    </Pressable>
   );
 }
 
